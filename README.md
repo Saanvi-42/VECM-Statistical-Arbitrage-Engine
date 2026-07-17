@@ -6,6 +6,10 @@ This project implements a statistical arbitrage strategy using a Vector Error Co
 
 The project downloads historical stock prices from Yahoo Finance, identifies cointegrated stock baskets using the Johansen cointegration test, builds a spread using the estimated hedge ratios, and backtests a simple mean reversion strategy based on the spread's Z-score.
 
+## System Architecture
+
+![System Architecture](architecture.png)
+
 ## Features
 
 a. Downloads historical stock price data from Yahoo Finance.
