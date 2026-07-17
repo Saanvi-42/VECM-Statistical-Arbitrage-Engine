@@ -163,20 +163,6 @@ c. Fixed entry and exit thresholds are used throughout the backtest.
 
 d. Position sizing and risk management are kept simple.
 
-## Future Improvements
-
-Some possible improvements are:
-
-a. Rolling VECM estimation.
-
-b. Dynamic position sizing.
-
-c. Better risk management.
-
-d. Portfolio-level optimization.
-
-e. Live market data integration.
-
 ## License
 
 This project was developed for educational purposes. demonstrating the application of VECM, cointegration analysis, and quantitative trading concepts.
