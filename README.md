@@ -2,36 +2,43 @@
 
 ## Overview
 
-This project implements a statistical arbitrage engine using a Vector Error Correction Model (VECM). The engine identifies groups of cointegrated stocks, builds a mean reversion trading strategy, backtests it on historical market data, and generates a performance report.
+This project implements a statistical arbitrage strategy using a Vector Error Correction Model (VECM). The idea behind the strategy is that some stocks move together over the long run, and whenever they temporarily drift apart, they tend to move back towards their normal relationship.
 
-The project uses historical stock prices downloaded from Yahoo Finance and applies the Johansen cointegration test to find baskets of stocks that share a long term relationship. A trading strategy is then created using the spread and its Z-score.
+The project downloads historical stock prices from Yahoo Finance, identifies cointegrated stock baskets using the Johansen cointegration test, builds a spread using the estimated hedge ratios, and backtests a simple mean reversion strategy based on the spread's Z-score.
 
 ## Features
 
-- Downloads historical stock price data using Yahoo Finance
-- Finds cointegrated stock baskets using the Johansen cointegration test
-- Selects the strongest basket based on cointegration rank and trace statistic
-- Builds a VECM-based spread using hedge ratios
-- Generates trading signals using Z-score thresholds
-- Backtests the strategy on historical data
-- Produces performance metrics and a visual tear sheet
+a. Downloads historical stock price data from Yahoo Finance.
+
+b. Tests different stock baskets for cointegration using the Johansen test.
+
+c. Selects the strongest basket based on the cointegration rank and trace statistic.
+
+d. Constructs a spread using the estimated hedge ratios.
+
+e. Generates buy and sell signals using the spread's Z-score.
+
+f. Backtests the trading strategy.
+
+g. Generates performance metrics and a tear sheet.
+
 
 ## Project Structure
-
- config.py               # Project configuration and parameters
- download_data.py        # Downloads historical stock prices
- basket_selector.py      # Finds cointegrated stock baskets
- vecm_engine.py          # VECM and spread calculations
- strategy.py             # Builds the trading strategy
- backtester.py           # Runs the backtest
- tear_sheet.py           # Generates performance charts
- requirements.txt        # Python dependencies
- README.md
-
-├── prices.csv                # Downloaded price data
-├── selected_basket.csv       # Selected cointegrated basket
-├── pnl.csv                   # Daily profit and loss
-└── tear_sheet.png            # Performance report
+.
+├── config.py
+├── download_data.py
+├── basket_selector.py
+├── vecm_engine.py
+├── strategy.py
+├── backtester.py
+├── tear_sheet.py
+├── requirements.txt
+├── README.md
+├── prices.csv
+├── basket_results.csv
+├── selected_basket.csv
+├── pnl.csv
+└── tear_sheet.png
 
 ## Requirements
 
@@ -41,99 +48,135 @@ pip install -r requirements.txt
 
 Required packages:
 
-- numpy
-- pandas
-- matplotlib
-- statsmodels
-- yfinance
+a. numpy
 
-## How to Run
+b. pandas
 
-### Step 1: Download historical data
+c. matplotlib
+
+d. statsmodels
+
+e. yfinance
+
+## Running the Project
+
+1] Download historical data
 python download_data.py
-This downloads historical stock prices and saves them as `prices.csv`.
 
-### Step 2: Run the backtest
+This downloads historical stock prices and stores them in `prices.csv`.
+
+2] Run the backtest
 python backtester.py
 
+This script:
 
-This will:
+a. Finds all valid cointegrated baskets.
 
-- Find all valid cointegrated baskets
-- Select the best basket
-- Build the trading strategy
-- Run the backtest
-- Save the daily PnL as `pnl.csv`
+b. Selects the strongest basket.
 
-### Step 3: Generate the performance report
+c. Builds the trading strategy.
+
+d. Runs the backtest.
+
+e. Saves the daily PnL as `pnl.csv`.
+
+3] Generate the performance report
 python tear_sheet.py
-This creates a performance summary and saves the charts as `tear_sheet.png`.
+
+This creates the performance summary and saves the charts as `tear_sheet.png`.
+
 ## Methodology
 
-The project follows these steps:
+The implementation follows these steps:
 
-1. Download historical stock prices.
-2. Generate every possible basket of three stocks.
-3. Apply the Johansen cointegration test to each basket.
-4. Select the basket with the highest cointegration rank. If multiple baskets have the same rank, the Johansen trace statistic is used as a tie-breaker.
-5. Estimate normalized hedge ratios from the first Johansen cointegrating eigenvector.
-6. Compute the spread for the selected basket.
-7. Calculate the rolling Z-score of the spread.
-8. Generate buy and sell signals based on the Z-score.
-9. Backtest the trading strategy.
-10. Evaluate performance using cumulative PnL, rolling Sharpe ratio, and drawdown.
+a. Download historical stock prices.
+
+b. Generate all possible three-stock baskets.
+
+c. Apply the Johansen cointegration test to every basket.
+
+d. Select the basket with the highest cointegration rank. If more than one basket has the same rank, the trace statistic is used as a tie-breaker.
+
+e. Estimate the hedge ratios using the first cointegrating eigenvector.
+
+f. Construct the spread.
+
+g. Calculate the rolling Z-score of the spread.
+
+h. Generate trading signals.
+
+i. Backtest the strategy.
+
+j. Evaluate the results using cumulative PnL, Sharpe ratio and drawdown.
 
 ## Trading Strategy
 
-The strategy assumes that the spread between cointegrated stocks tends to revert to its historical average.
+The strategy assumes that the spread between cointegrated stocks is mean reverting.
 
-Trading rules:
+The trading rules are simple:
 
-- Enter a long spread position when the Z-score falls below -2.
-- Enter a short spread position when the Z-score rises above +2.
-- Exit the trade when the absolute Z-score falls below 0.5.
+a. Go long when the Z-score falls below -2.
+
+b. Go short when the Z-score rises above +2.
+
+c. Exit the position when the absolute Z-score becomes smaller than 0.5.
 
 ## Output Files
 
 | File | Description |
 |------|-------------|
 | prices.csv | Historical stock prices |
-| selected_basket.csv | Selected cointegrated basket |
-| pnl.csv | Daily profit and loss from the backtest |
+| basket_results.csv | Cointegration statistics for valid baskets |
+| selected_basket.csv | Selected basket used in the strategy |
+| pnl.csv | Daily profit and loss |
 | tear_sheet.png | Performance charts |
 
 ## Performance Metrics
 
-The backtest reports:
+The backtest reports the following metrics:
 
-- Total Profit and Loss (PnL)
-- Sharpe Ratio
-- Winning Days
-- Losing Days
-- Win Rate
-- Maximum Drawdown
+a. Total Profit and Loss (PnL)
 
-The tear sheet visualizes cumulative PnL, rolling Sharpe ratio, and drawdown over time.
+b. Sharpe Ratio
+
+c. Winning Days
+
+d. Losing Days
+
+e. Win Rate
+
+f. Maximum Drawdown
+
+The tear sheet also provides plots of cumulative PnL, rolling Sharpe ratio and drawdown.
 
 ## Limitations
 
-- Historical data is downloaded from Yahoo Finance and updates over time, so results may vary slightly between runs.
-- Transaction costs are simplified.
-- The strategy uses fixed entry and exit thresholds.
-- The project is intended for educational purposes and is not investment advice.
+This project is a simplified implementation of a statistical arbitrage strategy.
 
+Some limitations are:
+
+a. Results depend on the historical data available from Yahoo Finance.
+
+b. Transaction costs are modeled in a simplified manner.
+
+c. Fixed entry and exit thresholds are used throughout the backtest.
+
+d. Position sizing and risk management are kept simple.
 
 ## Future Improvements
 
-Some possible extensions include:
+Some possible improvements are:
 
-- Dynamic position sizing
-- Portfolio optimization
-- Walk-forward validation
-- Additional risk management techniques
-- More advanced basket selection methods
-- Live market data integration
+a. Rolling VECM estimation.
 
-## Author
+b. Dynamic position sizing.
 
-Developed as a statistical arbitrage project demonstrating the application of VECM, cointegration analysis, and quantitative trading concepts.
+c. Better risk management.
+
+d. Portfolio-level optimization.
+
+e. Live market data integration.
+
+## License
+
+This project was developed for educational purposes. demonstrating the application of VECM, cointegration analysis, and quantitative trading concepts.
