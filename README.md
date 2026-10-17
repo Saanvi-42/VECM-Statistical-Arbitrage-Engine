@@ -2,10 +2,44 @@
 
 ## Overview
 
-This project implements a statistical arbitrage strategy using a Vector Error Correction Model (VECM). The idea behind the strategy is that some stocks move together over the long run, and whenever they temporarily drift apart, they tend to move back towards their normal relationship.
+## What this project does
 
-The project downloads historical stock prices from Yahoo Finance, identifies cointegrated stock baskets using the Johansen cointegration test, builds a spread using the estimated hedge ratios, and backtests a simple mean reversion strategy based on the spread's Z-score.
+Prices of some stocks in the market are often times linked to one another, 
+in a way where one cannot rise or fall at the expense of the other. They 
+form a relationship that can be mathematically expressed. This engine finds 
+out the relations (if there exist any) among a given set of stocks, and gives 
+us a mathematical equation in which all stocks are linked via coefficients. 
+The result of that expression is a value we expect to stay within a normal 
+range, and if it drifts more than 2 standard deviations away from its average, 
+we bet on it resetting back.
 
+## Why VECM over simple pairs trading
+
+Despite the mathematical relation we might find between two stocks, exceptional 
+cases may exist. Cases where one company receives specific news — like a fraud 
+scandal or major acquisition — which may cause its stock to permanently move 
+away from the other. In such a case, our bet fails because the relationship 
+actually broke, and did not just temporarily drift.
+
+The 6 stock engine functions such that, even if one relationship breaks or one 
+stock goes rogue, our net profit still exists because we benefit from the other 
+relationships.
+
+## Why these stocks
+
+I chose these 6 stocks because they fall into two natural groups that share 
+the same economic environment.
+
+AAPL, MSFT and GOOGL are all tech companies. They are affected by the same 
+market cycles, same consumer trends and same regulatory environment. This makes 
+it likely that a long run relationship exists between them.
+
+JPM, GS and BAC are all banks. They are all affected by the same Federal Reserve 
+interest rate decisions, same economic cycles and same lending environment.
+
+Splitting into two sector groups also reduces the risk of a relationship breaking 
+down, since stocks within the same sector are more likely to be cointegrated than 
+stocks across different sectors.
 ## System Architecture
 
 ![System Architecture](architecture.png)
